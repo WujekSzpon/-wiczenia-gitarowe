@@ -61,7 +61,7 @@
 
   /* CARD */
   .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:border-color 0.2s, transform 0.15s; text-decoration:none; display:block; }
-  .card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .card:hover { border-color:var(--kat-color, var(--accent)); transform:translateY(-2px); }
   .thumb { height:132px; display:flex; align-items:center; justify-content:center; font-size:38px; position:relative; overflow:hidden; }
   .thumb img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
   .thumb-icon { position:relative; z-index:1; }
@@ -72,6 +72,7 @@
   .card-tag { font-size:10px; padding:1px 6px; border-radius:99px; background:#1a1500; color:#ffcc00; border:1px solid #3a3000; }
   .badges { display:flex; flex-wrap:wrap; gap:4px; }
   .badge { font-size:10px; padding:2px 7px; border-radius:99px; font-weight:500; }
+  .b-lvl { background:#1a1a1a; color:#ffffff; border:1px solid #444; }
   .b-poc { background:#1a2e14; color:#7bc96f; border:1px solid #2a4a20; }
   .b-sr  { background:#2e2010; color:#e8a84b; border:1px solid #4a3318; }
   .b-zaa { background:#2e1010; color:#e87070; border:1px solid #4a2020; }
@@ -140,6 +141,10 @@
     <option>Zaawansowany</option>
   </select>
   <button class="btn-toolbar" onclick="resetFilters()">✕ Reset</button>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <button class="btn-toolbar" onclick="changeSize(-20)" title="Pomniejsz">−</button>
+    <button class="btn-toolbar" onclick="changeSize(20)" title="Powiększ">+</button>
+  </div>
   <button class="btn-toolbar" onclick="exportPDF()">⬇ Pobierz PDF</button>
   <span class="count" id="count"></span>
 </div>
@@ -177,6 +182,30 @@ const IKONY = {
   'arpegg':         { icon:'🎵', bg:'#1e2e1a' },
   'default':        { icon:'🎵', bg:'#1e1e1e' },
 };
+
+const KAT_COLORS = {
+  'DLA POCZĄTKUJĄCYCH': '#4CAF50',
+  'ARPEGIO':            '#26C6DA',
+  'ECONOMY PICKING':    '#1E88E5',
+  'FINGERSTYLE':        '#8D6E63',
+  'LEGATO':             '#8E24AA',
+  'PICKING':            '#E53935',
+  'RYTM':               '#FB8C00',
+  'SHRED':              '#D81B60',
+  'SPIDER':             '#424242',
+  'STRENGTH AND STRETCH':'#FDD835',
+  'STRING SKIPPING':    '#42A5F5',
+  'SWEEP':              '#5E35B1',
+  'SYNCHRO':            '#B0BEC5',
+  'TRACKS':             '#283593',
+  'WARMUP':             '#FFD54F',
+};
+
+function getKatColor(kat) {
+  if (!kat) return '#ffcc00';
+  const k = kat.toUpperCase().trim();
+  return KAT_COLORS[k] || '#ffcc00';
+}
 
 function getIkona(kat) {
   if (!kat) return IKONY.default;
@@ -318,6 +347,15 @@ function render() {
         </div>
       </a>`;
   }).join('');
+}
+
+let cardSize = 230;
+
+function changeSize(delta) {
+  cardSize = Math.min(400, Math.max(140, cardSize + delta));
+  document.getElementById('grid').style.gridTemplateColumns = `repeat(auto-fill, minmax(${cardSize}px, 1fr))`;
+  const thumbH = Math.round(cardSize * 0.57);
+  document.querySelectorAll('.thumb').forEach(t => t.style.height = thumbH + 'px');
 }
 
 function resetFilters() {
