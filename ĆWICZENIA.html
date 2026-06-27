@@ -292,9 +292,8 @@ function render() {
 
   grid.innerHTML = filtered.map(e => {
     const ik = getIkona(e.kat);
-    const thumb = e.okladka
-      ? `<img src="${e.okladka}" alt="${e.nazwa}" loading="lazy">`
-      : `<span class="thumb-icon">${ik.icon}</span>`;
+    const baseUrl = `https://raw.githubusercontent.com/WujekSzpon/-wiczenia-gitarowe/main/okladki/${encodeURIComponent(e.nazwa)}`;
+    const thumb = `<img src="${baseUrl}.png" alt="${e.nazwa}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="if(this.src.endsWith('.png')){this.src=this.src.replace('.png','.jpg')}else{this.style.display='none';this.nextElementSibling.style.display='block';}"><span class="thumb-icon" style="display:none">${ik.icon}</span>`;
     const desc = e.opis ? `<div class="card-desc">${e.opis}</div>` : '';
     const tagsHtml = e.tagi.length ? `<div class="card-tags">${e.tagi.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>` : '';
     const katBadge = e.kat ? `<span class="badge b-kat">${e.kat}</span>` : '';
