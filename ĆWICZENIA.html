@@ -332,7 +332,7 @@ function exportPDF() {
 
   // Build a self-contained PDF page
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'background:#0f0f0f;padding:20px;font-family:Inter,sans-serif;color:#f0ece0;';
+  wrap.style.cssText = 'background:#0f0f0f;padding:14px 16px;font-family:Inter,sans-serif;color:#f0ece0;width:390px;box-sizing:border-box;';
 
   // Header
   wrap.innerHTML = `
@@ -340,10 +340,8 @@ function exportPDF() {
       <div style="font-size:20px;font-weight:600;color:#c8a84b;letter-spacing:0.04em;">🎸 W Szponach Gitary</div>
       <div style="font-size:13px;color:#888;margin-top:4px;">${label} · ${count}</div>
     </div>
-    <div id="pdf-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
+    <div id="pdf-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
   `;
-
-  document.body.appendChild(wrap);
 
   // Clone cards into PDF grid
   const pdfGrid = wrap.querySelector('#pdf-grid');
@@ -357,12 +355,21 @@ function exportPDF() {
     pdfGrid.appendChild(clone);
   });
 
+  // Measure actual height after render for single-page PDF
+  document.body.appendChild(wrap);
+  const totalHeight = wrap.scrollHeight;
+  document.body.removeChild(wrap);
+
+  const pxToMm = 0.2645;
+  const widthMm = 390 * pxToMm;
+  const heightMm = totalHeight * pxToMm + 10;
+
   const opt = {
-    margin: 10,
+    margin: 0,
     filename: `cwiczenia-${label.replace(/[^a-zA-Z0-9]/g,'-')}.pdf`,
-    image: { type: 'jpeg', quality: 0.92 },
-    html2canvas: { scale: 2, backgroundColor: '#0f0f0f', useCORS: true, allowTaint: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, backgroundColor: '#0f0f0f', useCORS: true, allowTaint: true, windowWidth: 390 },
+    jsPDF: { unit: 'mm', format: [widthMm, heightMm], orientation: 'portrait' }
   };
 
   html2pdf().set(opt).from(wrap).save().then(() => {
