@@ -105,7 +105,8 @@
 <body>
 
 <div id="login-screen">
-  <div class="lock-logo">🔒 W Szponach Gitary</div>
+  <img src="https://raw.githubusercontent.com/WujekSzpon/-wiczenia-gitarowe/main/branding/LOGO%20-%20W%20SZPONACH%20GITARY%20BLANK.png" alt="W Szponach Gitary" style="height:100px;object-fit:contain;margin-bottom:8px;">
+  <div class="lock-logo">Ćwiczenia na gitarę</div>
   <input type="password" id="pwd-input" placeholder="Wpisz hasło…" onkeydown="if(event.key==='Enter')checkPwd()">
   <button id="login-btn" onclick="checkPwd()">WEJDŹ</button>
   <div id="login-error">Złe hasło — spróbuj jeszcze raz.</div>
@@ -113,13 +114,20 @@
 </div>
 
 <header>
-  <div class="logo">🎸 W Szponach Gitary <span>/ Ćwiczenia</span></div>
+  <div class="logo">
+    <img src="https://raw.githubusercontent.com/WujekSzpon/-wiczenia-gitarowe/main/branding/LOGO%20-%20W%20SZPONACH%20GITARY%20BLANK.png" alt="W Szponach Gitary" style="height:38px;object-fit:contain;">
+  </div>
   <div class="header-right">Strefa Patronów</div>
 </header>
 
 <div class="hero">
-  <h1>Biblioteka <span>ćwiczeń</span></h1>
-  <p>Kliknij kartę, żeby otworzyć materiały na Google Drive.</p>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <img src="https://raw.githubusercontent.com/WujekSzpon/-wiczenia-gitarowe/main/branding/%C4%86WICZENIAK%2001.png" alt="Cwiczeniak" style="height:90px;object-fit:contain;flex-shrink:0;">
+    <div>
+      <h1>Biblioteka <span>ćwiczeń</span></h1>
+      <p>Kliknij kartę, żeby otworzyć materiały na Google Drive.</p>
+    </div>
+  </div>
 </div>
 
 <div class="toolbar">
@@ -321,6 +329,20 @@ function resetFilters() {
   render();
 }
 
+function fixPL(str) {
+  if (!str) return '';
+  return str
+    .replace(/ą/g,'a').replace(/Ą/g,'A')
+    .replace(/ć/g,'c').replace(/Ć/g,'C')
+    .replace(/ę/g,'e').replace(/Ę/g,'E')
+    .replace(/ł/g,'l').replace(/Ł/g,'L')
+    .replace(/ń/g,'n').replace(/Ń/g,'N')
+    .replace(/ó/g,'o').replace(/Ó/g,'O')
+    .replace(/ś/g,'s').replace(/Ś/g,'S')
+    .replace(/ź/g,'z').replace(/Ź/g,'Z')
+    .replace(/ż/g,'z').replace(/Ż/g,'Z');
+}
+
 function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -349,13 +371,10 @@ function exportPDF() {
   // Header
   doc.setFontSize(18);
   doc.setTextColor(200, 168, 75); // gold
-  doc.text('W Szponach Gitary', margin, y);
+  doc.text(fixPL('W Szponach Gitary - Cwiczenia.'), margin, y);
   y += 7;
 
-  doc.setFontSize(10);
-  doc.setTextColor(136, 136, 136); // muted
-  doc.text(`${label} · ${filtered.length} ćwiczeń`, margin, y);
-  y += 5;
+  y += 2;
 
   // Divider
   doc.setDrawColor(46, 46, 46);
@@ -376,22 +395,22 @@ function exportPDF() {
     doc.text(`${i + 1}.`, margin, y);
 
     // Title as link
-    doc.setFontSize(11);
-    doc.setTextColor(240, 236, 224);
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
     const titleX = margin + 8;
-    const titleLines = doc.splitTextToSize(e.nazwa, pageW - margin - titleX);
+    const titleLines = doc.splitTextToSize(fixPL(e.nazwa), pageW - margin - titleX);
     
     if (e.link && e.link !== '#') {
       doc.setTextColor(200, 168, 75);
-      doc.textWithLink(titleLines[0], titleX, y, { url: e.link });
+      doc.textWithLink(fixPL(titleLines[0]), titleX, y, { url: e.link });
       // underline
       const textW = doc.getTextWidth(titleLines[0]);
       doc.setDrawColor(200, 168, 75);
       doc.setLineWidth(0.2);
       doc.line(titleX, y + 0.5, titleX + textW, y + 0.5);
     } else {
-      doc.setTextColor(240, 236, 224);
-      doc.text(titleLines[0], titleX, y);
+      doc.setTextColor(255, 255, 255);
+      doc.text(fixPL(titleLines[0]), titleX, y);
     }
 
     y += 8;
@@ -405,7 +424,12 @@ function exportPDF() {
   y += 5;
   doc.setFontSize(8);
   doc.setTextColor(136, 136, 136);
-  doc.text('W Szponach Gitary — wszonachgitary.pl', margin, y);
+  doc.setTextColor(200, 168, 75);
+  doc.textWithLink('wszponachgitary.pl', margin, y, { url: 'https://wszponachgitary.short.gy/sklep' });
+  const footerW = doc.getTextWidth('wszponachgitary.pl');
+  doc.setDrawColor(200, 168, 75);
+  doc.setLineWidth(0.2);
+  doc.line(margin, y + 0.5, margin + footerW, y + 0.5);
 
   doc.save(`cwiczenia-${label.replace(/[^a-zA-Z0-9]/g,'-')}.pdf`);
 }
