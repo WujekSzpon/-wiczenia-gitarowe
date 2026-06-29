@@ -30,17 +30,13 @@
   .logo span { color:var(--text); }
   .header-right { font-size:12px; color:var(--muted); }
 
-  /* HERO */
-  .hero { padding:2rem 2rem 1.5rem; border-bottom:1px solid var(--border); }
-  .hero h1 { font-family:'Oswald',sans-serif; font-size:26px; font-weight:600; margin-bottom:4px; }
-  .hero h1 span { color:var(--accent); }
-  .hero p { font-size:13px; color:var(--muted); }
+
 
   /* TOOLBAR */
   .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:1rem 2rem; border-bottom:1px solid var(--border); background:var(--bg); position:sticky; top:58px; z-index:9; }
 
   .toolbar input, .toolbar select { background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:6px; padding:7px 12px; font-size:13px; font-family:'Open Sans',sans-serif; outline:none; transition:border-color 0.15s; box-sizing:border-box; }
-  #search { width:162px; }
+  #search { width:152px; }
   #sort { width:162px; }
   #kat { width:162px; }
   #lvl { width:162px; }
@@ -62,7 +58,12 @@
   #tags-dropdown { position:fixed; inset:0; z-index:200; display:none; }
   #tags-dropdown.open { display:block; }
   #tags-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.6); }
+  /* MOBILE - panel od dołu */
   #tags-panel { position:absolute; bottom:0; left:0; right:0; background:var(--surface); border-radius:16px 16px 0 0; padding:20px; max-height:70vh; overflow-y:auto; }
+  /* DESKTOP - okienko na środku */
+  @media (min-width:641px) {
+    #tags-panel { bottom:auto; left:50%; top:50%; right:auto; transform:translate(-50%,-50%); width:480px; max-height:80vh; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,0.7); }
+  }
   #tags-panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
   #tags-panel-title { font-family:'Oswald',sans-serif; font-size:16px; font-weight:600; color:var(--text); }
   #tags-chips { display:flex; flex-wrap:wrap; gap:8px; }
@@ -165,22 +166,21 @@
   </div>
 </div>
 
-<header>
-  <div class="logo">
-    <img src="https://raw.githubusercontent.com/WujekSzpon/guitar-exercises-szpon/main/branding/LOGO%20-%20W%20SZPONACH%20GITARY%20BLANK.png" alt="W Szponach Gitary" style="height:38px;object-fit:contain;">
+<header id="main-header">
+  <div id="header-logo" style="display:flex;align-items:center;gap:10px;overflow:hidden;cursor:default;" onclick="if(toolbarCollapsed)expandToolbar()">
+    <img src="https://raw.githubusercontent.com/WujekSzpon/guitar-exercises-szpon/main/branding/LOGO%20-%20W%20SZPONACH%20GITARY%20BLANK.png" alt="W Szponach Gitary" style="height:38px;object-fit:contain;flex-shrink:0;">
+    <span id="header-title" style="font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;color:#fff;line-height:1.2;white-space:nowrap;">Gitarowe ćwiczenia <span style="color:#ffcc00;">od Wujka Szpona</span></span>
   </div>
-
+  <div id="toolbar-mini" style="display:none;align-items:center;justify-content:space-between;flex:1;cursor:pointer;" onclick="expandToolbar()">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:13px;color:var(--muted);">🔍 Filtry</span>
+      <span id="toolbar-mini-count" style="font-size:12px;color:#ffcc00;font-weight:600;"></span>
+    </div>
+    <span style="font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:5px 14px;background:transparent;">▼ Rozwiń</span>
+  </div>
 </header>
 
-<div class="hero">
-  <div style="display:flex;align-items:center;gap:20px;">
-    <img src="https://raw.githubusercontent.com/WujekSzpon/guitar-exercises-szpon/main/branding/%C4%86WICZENIAK%2001.png" alt="Cwiczeniak" style="height:90px;object-fit:contain;flex-shrink:0;">
-    <div>
-      <h1>Gitarowe ćwiczenia <span>od Wujka Szpona</span></h1>
-      <p>Kliknij kartę, żeby otworzyć materiały na Google Drive.</p>
-    </div>
-  </div>
-</div>
+
 
 <div id="toolbar-wrap">
 
@@ -217,6 +217,17 @@
 </div>
 
 <div class="tags-row" id="tags-row"></div>
+
+<!-- SCROLL TO TOP -->
+<button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="
+  position:fixed; bottom:24px; right:20px; z-index:150;
+  width:44px; height:44px; border-radius:50%;
+  background:#ffcc00; color:#000; border:none;
+  font-size:20px; cursor:pointer; display:none;
+  align-items:center; justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  transition:opacity 0.2s;
+">↑</button>
 
 <div id="tags-dropdown">
   <div id="tags-backdrop" onclick="closeTagsPanel()"></div>
@@ -373,6 +384,7 @@ function loadExcel() {
 
       document.getElementById('state-msg').style.display = 'none';
       render();
+      changeSize(0);
     })
     .catch(e => {
       document.getElementById('state-msg').textContent = '⚠️ ' + e.message + ' — upewnij się że plik ĆWICZENIA.xlsx jest w tym samym folderze co ten plik HTML.';
@@ -483,7 +495,7 @@ function render() {
   }).join('');
 }
 
-let cardSize = window.innerWidth <= 640 ? 160 : 440;
+let cardSize = window.innerWidth <= 640 ? 280 : 440;
 
 function changeSize(delta) {
   cardSize = Math.min(550, Math.max(140, cardSize + delta));
@@ -495,6 +507,16 @@ function changeSize(delta) {
 // TOOLBAR SCROLL BEHAVIOR
 let lastScroll = 0;
 let toolbarCollapsed = false;
+
+// SCROLL TO TOP BUTTON
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scroll-top-btn');
+  if (window.scrollY > 300) {
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+});
 
 window.addEventListener('scroll', () => {
   const current = window.scrollY;
@@ -510,7 +532,8 @@ window.addEventListener('scroll', () => {
     document.getElementById('toolbar-mini-count').textContent = document.getElementById('count').textContent;
   } else if (current < lastScroll - 10 && toolbarCollapsed) {
     toolbar.classList.remove('hidden');
-    mini.classList.remove('visible');
+    document.getElementById('toolbar-mini').style.display = 'none';
+    document.getElementById('header-title').style.display = '';
     toolbarCollapsed = false;
   }
   lastScroll = Math.max(0, current);
@@ -518,10 +541,8 @@ window.addEventListener('scroll', () => {
 
 function expandToolbar() {
   document.getElementById('toolbar').classList.remove('hidden');
-  document.getElementById('toolbar-mini').classList.remove('visible');
-  document.getElementById('header-logo').style.display = '';
-  document.getElementById('main-header').style.cursor = 'default';
-  document.getElementById('main-header').onclick = null;
+  document.getElementById('toolbar-mini').style.display = 'none';
+  document.getElementById('header-title').style.display = '';
   toolbarCollapsed = false;
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
