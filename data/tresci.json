@@ -4,7 +4,7 @@
     "Ćwicz krótko ale regularnie. 25 minut dziennie da Ci więcej niż 2 godziny raz w tygodniu.",
     "Używaj metronomu od samego początku — rytm to fundament każdego gitarzysty.",
     "Nagraj się podczas ćwiczenia. Usłyszysz błędy których nie słyszysz w trakcie gry.",
-    "Uczysz się nowego ćwiczenia? Zacznij od połowy docelowego tempa i stopniowo przyspieszaj."
+    "Uczysz się nowego ćwiczenia? Zacznij od połowy docelowego tempa i stopniowo przyspieszaj.",
     "Stosuj Speed Bursty aby przyzwyczaić się do szybkiego tempa. Grasz na 110% i pozwalasz sobie na drobne niedoskonałości."
   ],
   "reklamy": [
@@ -18,9 +18,10 @@
       "link": "https://wszponachgitary.short.gy/sklep",
       "linkText": "Odwiedź sklep →"
     },
+    {
       "text": "Stoisz w miejscu z techniką? Zapisz się na gitarowy Mentoring z Wujkiem Szponem. To tak jakby lekcje gitarowe prowadzone w korespondencyjny sposób.",
       "link": "https://patronite.pl/post/83303/gitarowy-mentoring",
       "linkText": "Zapisz się na mentoring →"
-    {
+    }
   ]
 }
