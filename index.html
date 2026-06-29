@@ -504,13 +504,15 @@ function render() {
   }).join('');
 }
 
-let cardSize = window.innerWidth <= 640 ? 280 : 440;
+const savedSize = localStorage.getItem('wsg_cardsize');
+let cardSize = savedSize ? parseInt(savedSize) : (window.innerWidth <= 640 ? 280 : 440);
 
 function changeSize(delta) {
   cardSize = Math.min(550, Math.max(140, cardSize + delta));
   document.getElementById('grid').style.gridTemplateColumns = `repeat(auto-fill, minmax(${cardSize}px, 1fr))`;
   const thumbH = Math.round(cardSize * 0.57);
   document.querySelectorAll('.thumb').forEach(t => t.style.height = thumbH + 'px');
+  if (delta !== 0) localStorage.setItem('wsg_cardsize', cardSize);
 }
 
 // TOOLBAR SCROLL BEHAVIOR
