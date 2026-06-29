@@ -518,41 +518,9 @@ let lastScroll = 0;
 let toolbarCollapsed = false;
 
 // SCROLL TO TOP BUTTON
-window.addEventListener('scroll', () => {
-  const btn = document.getElementById('scroll-top-btn');
-  if (window.scrollY > 300) {
-    btn.style.display = 'flex';
-  } else {
-    btn.style.display = 'none';
-  }
-});
 
-window.addEventListener('scroll', () => {
-  const current = window.scrollY;
-  const toolbar = document.getElementById('toolbar');
-  const mini = document.getElementById('toolbar-mini');
-  const count = document.getElementById('count');
-
-  if (current > lastScroll && current > 100 && !toolbarCollapsed) {
-    toolbar.classList.add('hidden');
-    mini.classList.add('visible');
-    document.getElementById('header-logo').style.display = 'none';
-    toolbarCollapsed = true;
-    document.getElementById('toolbar-mini-count').textContent = document.getElementById('count').textContent;
-  } else if (current < lastScroll - 10 && toolbarCollapsed) {
-    toolbar.classList.remove('hidden');
-    document.getElementById('toolbar-mini').style.display = 'none';
-    document.getElementById('header-title').style.display = '';
-    toolbarCollapsed = false;
-  }
-  lastScroll = Math.max(0, current);
-});
 
 function expandToolbar() {
-  document.getElementById('toolbar').classList.remove('hidden');
-  document.getElementById('toolbar-mini').style.display = 'none';
-  document.getElementById('header-title').style.display = '';
-  toolbarCollapsed = false;
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
