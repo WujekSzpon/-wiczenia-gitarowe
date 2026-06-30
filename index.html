@@ -686,14 +686,20 @@ function exportPDF() {
 let PORADY = [];
 let REKLAMY = [];
 
-fetch('https://raw.githubusercontent.com/WujekSzpon/guitar-exercises-szpon/main/data/tresci.json')
-  .then(r => r.json())
-  .then(data => {
-    PORADY = data.porady || [];
-    REKLAMY = data.reklamy || [];
+fetch('https://raw.githubusercontent.com/WujekSzpon/guitar-exercises-szpon/main/data/tresci.txt')
+  .then(r => r.text())
+  .then(text => {
+    const poradySection = text.split('REKLAMY:')[0].replace('PORADY:', '').trim();
+    const reklamySection = text.split('REKLAMY:')[1] ? text.split('REKLAMY:')[1].trim() : '';
+
+    PORADY = poradySection.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+
+    REKLAMY = reklamySection.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean).map(block => {
+      const parts = block.split('|').map(p => p.trim());
+      return { text: parts[0] || '', link: parts[1] || '#', linkText: parts[2] || 'Sprawdź →' };
+    });
   })
   .catch(() => {
-    // Fallback jeśli plik niedostępny
     PORADY = ["Ćwicz regularnie — nawet 15 minut dziennie robi różnicę!"];
     REKLAMY = [{ text: "Sprawdź więcej materiałów w sklepie Wujka Szpona!", link: "https://wszponachgitary.short.gy/sklep", linkText: "Odwiedź sklep →" }];
   });
